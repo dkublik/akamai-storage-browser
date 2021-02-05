@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import pl.dk.akamaibrowser.model.File;
 import reactor.core.publisher.Mono;
 
+import java.time.Instant;
+import java.util.Comparator;
+
 import static org.springframework.util.StringUtils.isEmpty;
 
 @Controller
@@ -27,6 +30,7 @@ class ContentController {
                          contentHtml += "<td><a href='" + aHref  + "'>..</a></td>";
                          contentHtml += "<td/><td/><td/><td/><td/><td/>";
                          contentHtml += "</tr>";
+                         stat.getFiles().sort(Comparator.comparingInt(File::getMtime));
                          for (File file: stat.getFiles()) {
                              if (file.getType().equals("dir")) {
                                  contentHtml += "<tr class='dir'>";
@@ -40,7 +44,7 @@ class ContentController {
                              contentHtml += "<td>" + file.getType() + "</td>";
                              contentHtml += "<td>" + (file.getSize() != 0 ? file.getSize() : file.getBytes()) + "</td>";
                              contentHtml += "<td>" + file.getFiles() + "</td>";
-                             contentHtml += "<td>" + file.getMtime() + "</td>";
+                             contentHtml += "<td>" + (Instant.ofEpochSecond(file.getMtime())) + "</td>";
                              contentHtml += "<td>" + file.getMd5() + "</td>";
                              contentHtml += "<td>" + file.isImplicit() + "</td>";
                              contentHtml += "</tr>";
